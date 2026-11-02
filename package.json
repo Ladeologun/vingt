@@ -1,0 +1,21 @@
+{
+    "name": "vingt-french",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite --host 127.0.0.1",
+        "build": "vite build",
+        "test": "node --test src/__tests__/*.test.js",
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
+    },
+    "dependencies": {
+        "react": "19.0.0",
+        "react-dom": "19.0.0"
+    },
+    "devDependencies": {
+        "prettier": "3.8.1",
+        "vite": "6.4.1"
+    }
+}
