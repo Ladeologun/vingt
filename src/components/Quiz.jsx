@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 
 import { getQuizOptions } from '../learning.js';
+import { getListeningOptions } from '../listening.js';
 import { verbs } from '../verbs.js';
 
 import { Icon } from './Icon.jsx';
+import { SentencePlayer } from './SentencePlayer.jsx';
 
 export const Quiz = ({
     quiz,
@@ -11,6 +13,7 @@ export const Quiz = ({
     next: handleNextQuestion,
     close: handleClose,
     retry: handleRetry,
+    onStartListening,
 }) => {
     useEffect(() => {
         document.querySelector('.quiz-close')?.focus();
@@ -33,6 +36,13 @@ export const Quiz = ({
     };
 
     const verb = quiz.list[quiz.index];
+    const isListening = quiz.mode === 'listening';
+    const options = isListening
+        ? getListeningOptions({ question: verb, questionIndex: quiz.index })
+        : getQuizOptions({ verb, pool: verbs, questionIndex: quiz.index }).map(option => ({
+              id: option.id,
+              text: option.en,
+          }));
 
     return (
         <div
@@ -65,11 +75,11 @@ export const Quiz = ({
                                 : 'A little better, every day.'}
                         </h2>
                         <p>
-                            You matched{' '}
+                            {isListening ? 'You understood' : 'You matched'}{' '}
                             <strong>
                                 {quiz.score} of {quiz.list.length}
                             </strong>{' '}
-                            meanings correctly.
+                            {isListening ? 'sentences correctly.' : 'meanings correctly.'}
                         </p>
                         <div className="score">
                             {Math.round((quiz.score / quiz.list.length) * 100)}
@@ -80,14 +90,28 @@ export const Quiz = ({
                                 <strong>A few to revisit</strong>
                                 {quiz.missed.map(verb => (
                                     <div key={verb.id}>
-                                        <span lang="fr">{verb.fr}</span>
-                                        <span>{verb.en}</span>
+                                        <span lang="fr">
+                                            {isListening ? verb.sentence : verb.fr}
+                                        </span>
+                                        <span>{isListening ? verb.meaning : verb.en}</span>
                                     </div>
                                 ))}
                             </div>
                         )}
-                        <button className="primary" onClick={handleRetry}>
-                            {quiz.missed.length > 0 ? 'Practice missed verbs' : 'Practice again'}
+                        {!isListening && (
+                            <button className="primary" onClick={onStartListening}>
+                                Try listening practice <Icon name="sound" />
+                            </button>
+                        )}
+                        <button
+                            className={isListening ? 'primary' : 'quiet-button'}
+                            onClick={handleRetry}
+                        >
+                            {quiz.missed.length > 0
+                                ? isListening
+                                    ? 'Retry missed sentences'
+                                    : 'Practice missed verbs'
+                                : 'Practice again'}
                             <Icon name="arrow" />
                         </button>
                         <button className="quiet-button" onClick={handleClose}>
@@ -97,21 +121,30 @@ export const Quiz = ({
                 ) : (
                     <>
                         <span className="eyebrow">
-                            MEANING MATCH · {quiz.index + 1} OF {quiz.list.length}
+                            {isListening ? 'LISTEN & UNDERSTAND' : 'MEANING MATCH'} ·{' '}
+                            {quiz.index + 1} OF {quiz.list.length}
                         </span>
                         <div className="track">
                             <span style={{ width: (quiz.index / quiz.list.length) * 100 + '%' }} />
                         </div>
-                        <h2 id="quiz-title">What does this verb mean?</h2>
-                        <div className="quiz-word" lang="fr">
-                            {verb.fr}
-                        </div>
+                        <h2 id="quiz-title">
+                            {isListening
+                                ? 'What does the speaker mean?'
+                                : 'What does this verb mean?'}
+                        </h2>
+                        {isListening ? (
+                            <SentencePlayer
+                                key={verb.id}
+                                sentence={verb.sentence}
+                                isAnswered={quiz.selected !== null}
+                            />
+                        ) : (
+                            <div className="quiz-word" lang="fr">
+                                {verb.fr}
+                            </div>
+                        )}
                         <div className="answers">
-                            {getQuizOptions({
-                                verb: verb,
-                                pool: verbs,
-                                questionIndex: quiz.index,
-                            }).map((option, index) => (
+                            {options.map((option, index) => (
                                 <button
                                     key={option.id}
                                     disabled={quiz.selected !== null}
@@ -127,7 +160,7 @@ export const Quiz = ({
                                     onClick={() => handleAnswer(option.id)}
                                 >
                                     <span>{String.fromCharCode(65 + index)}</span>
-                                    {option.en}
+                                    {option.text}
                                     {quiz.selected !== null && option.id === verb.id && (
                                         <Icon name="check" />
                                     )}
@@ -140,12 +173,28 @@ export const Quiz = ({
                                     <strong>
                                         {quiz.selected === verb.id
                                             ? 'Exactly. Bien joué !'
-                                            : `Keep going! ${verb.fr} means “${verb.en}”.`}
+                                            : isListening
+                                              ? 'Good effort. Listen again and compare the meaning below.'
+                                              : `Keep going! ${verb.fr} means “${verb.en}”.`}
                                     </strong>
+                                    {isListening && (
+                                        <div className="sentence-explanation">
+                                            <span className="eyebrow">THE MEANING</span>
+                                            <p>{verb.meaning}</p>
+                                            <span className="eyebrow">THE VERB IN CONTEXT</span>
+                                            <p>
+                                                <strong lang="fr">{verb.form}</strong> is a form of{' '}
+                                                <strong lang="fr">{verb.fr}</strong> ({verb.en}) in
+                                                this sentence.
+                                            </p>
+                                        </div>
+                                    )}
                                     <button className="primary" onClick={handleNextQuestion}>
                                         {quiz.index + 1 === quiz.list.length
                                             ? 'See my results'
-                                            : 'Next verb'}
+                                            : isListening
+                                              ? 'Next sentence'
+                                              : 'Next verb'}
                                         <Icon name="arrow" size={17} />
                                     </button>
                                 </div>

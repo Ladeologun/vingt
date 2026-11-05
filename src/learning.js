@@ -101,7 +101,8 @@ const isProgress = value => {
             isDateKey(date) &&
             isRecord(record) &&
             isVerbIDList(record.learned) &&
-            (record.quiz === undefined || isQuizResult(record.quiz)),
+            (record.quiz === undefined || isQuizResult(record.quiz)) &&
+            (record.listening === undefined || isQuizResult(record.listening)),
     );
 };
 

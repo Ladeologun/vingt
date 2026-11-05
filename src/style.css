@@ -1342,3 +1342,76 @@ footer > span:last-child {
         display: none;
     }
 }
+
+.listening-banner {
+    background: var(--soft-bg, #f0f2e9);
+    margin-top: 18px;
+}
+.sentence-player {
+    margin: 24px 0;
+    padding: 22px 15px;
+    border: 1px solid var(--border, #dfe3d5);
+    border-radius: 10px;
+    background: var(--soft-bg, #eff2e7);
+    text-align: center;
+}
+.listening-emblem {
+    color: var(--text-secondary, #657e50);
+    margin-bottom: 12px;
+}
+.sentence-player > p {
+    font-size: 12px;
+    line-height: 1.8;
+}
+.playback-controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+.playback-status {
+    color: var(--text-secondary, #67725f);
+    font-size: 10px !important;
+}
+.transcript-toggle {
+    background: transparent;
+    border: 0;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    color: var(--text-secondary, #576e48);
+    font-size: 11px;
+    padding: 8px;
+}
+.sentence-player > .sentence-transcript {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 21px;
+    margin: 15px 0 0;
+}
+.audio-error {
+    color: var(--text-primary, #78503a);
+}
+.sentence-explanation {
+    background: var(--soft-bg, #eff2e7);
+    border-radius: 7px;
+    padding: 18px;
+    font-size: 12px;
+    line-height: 1.8;
+}
+.sentence-explanation p {
+    margin: 7px 0 15px;
+}
+.sentence-explanation p:last-child {
+    margin-bottom: 0;
+}
+.listening-history {
+    display: block;
+    margin-top: 7px;
+}
+.answers button {
+    line-height: 1.6;
+}
+.missed > div > span {
+    flex: 1;
+    line-height: 1.6;
+}

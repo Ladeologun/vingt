@@ -14,6 +14,7 @@ import {
     writeProgress,
 } from './learning.js';
 import { verbs } from './verbs.js';
+import { getListeningQuestion } from './listening.js';
 
 const getBrowserStorage = () => window.localStorage;
 
@@ -121,13 +122,16 @@ export const App = () => {
         speechSynthesis.speak(utterance);
     };
 
-    const startQuiz = (list = dailyLesson) => {
+    const startQuiz = ({ list = dailyLesson, mode = 'meaning' } = {}) => {
         if (list.length === 0) {
             return;
         }
 
         setQuiz({
-            list: getShuffledVerbs({ verbs: list }),
+            list: getShuffledVerbs({
+                verbs: mode === 'listening' ? list.map(getListeningQuestion) : list,
+            }),
+            mode,
             index: 0,
             selected: null,
             missed: [],
@@ -162,7 +166,7 @@ export const App = () => {
 
         if (quiz.index + 1 === quiz.list.length) {
             updateDayProgress({
-                quiz: {
+                [quiz.mode === 'listening' ? 'listening' : 'quiz']: {
                     score: quiz.score,
                     total: quiz.list.length,
                     missed: quiz.missed.map(verb => verb.id),
@@ -379,7 +383,8 @@ export const App = () => {
                                         Object.keys(progress.days).filter(
                                             dateKey =>
                                                 progress.days[dateKey].learned.length > 0 ||
-                                                progress.days[dateKey].quiz,
+                                                !!progress.days[dateKey].quiz ||
+                                                !!progress.days[dateKey].listening,
                                         ).length,
                                         'Days practiced',
                                     ],
@@ -420,6 +425,12 @@ export const App = () => {
                                                     {dayProgress.quiz
                                                         ? `Quiz: ${dayProgress.quiz.score} / ${dayProgress.quiz.total}`
                                                         : 'Quiz to come'}
+                                                    {!!dayProgress.listening && (
+                                                        <span className="listening-history">
+                                                            Listening: {dayProgress.listening.score}{' '}
+                                                            / {dayProgress.listening.total}
+                                                        </span>
+                                                    )}
                                                 </strong>
                                             </div>
                                         ))
@@ -495,6 +506,36 @@ export const App = () => {
                                     </button>
                                 </section>
                             )}
+                            {activeTab === 'today' && (
+                                <section className="practice-banner listening-banner">
+                                    <span className="practice-symbol">
+                                        <Icon name="sound" size={34} />
+                                    </span>
+                                    <div>
+                                        <span className="eyebrow">
+                                            STEP TWO · YOUR VERBS IN REAL LIFE
+                                        </span>
+                                        <h2>Hear it. Understand it.</h2>
+                                        <p>
+                                            Listen to 20 new French sentences. Choose what the
+                                            speaker means, then uncover the translation.
+                                        </p>
+                                        {!!todayProgress.listening && (
+                                            <span className="last-score">
+                                                Last listening practice:{' '}
+                                                {todayProgress.listening.score} /{' '}
+                                                {todayProgress.listening.total} correct
+                                            </span>
+                                        )}
+                                    </div>
+                                    <button
+                                        className="primary"
+                                        onClick={() => startQuiz({ mode: 'listening' })}
+                                    >
+                                        Start listening <Icon name="sound" size={18} />
+                                    </button>
+                                </section>
+                            )}
                         </>
                     )}
                     <footer>
@@ -518,7 +559,13 @@ export const App = () => {
                     answer={handleAnswer}
                     next={handleNextQuestion}
                     close={() => setQuiz(null)}
-                    retry={() => startQuiz(quiz.missed.length > 0 ? quiz.missed : dailyLesson)}
+                    retry={() =>
+                        startQuiz({
+                            list: quiz.missed.length > 0 ? quiz.missed : dailyLesson,
+                            mode: quiz.mode,
+                        })
+                    }
+                    onStartListening={() => startQuiz({ mode: 'listening' })}
                 />
             )}
         </div>

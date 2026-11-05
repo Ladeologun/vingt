@@ -8,7 +8,8 @@ Learn 20 French verbs a day with English meanings, pronunciation, examples, and 
 - **Pronunciation:** French audio and IPA guides for each verb.
 - **Examples:** Simple French sentences with English translations.
 - **Practice:** Hide meanings, take quizzes, and retry missed verbs.
-- **Progress:** Track learned verbs and daily quiz results.
+- **Listening practice:** Hear new sentences using today’s verbs, choose their meanings, and reveal translations and verb explanations after answering. Replay normally or slowly, show the French transcript when needed, and retry missed sentences.
+- **Progress:** Track learned verbs, vocabulary quiz results, and listening scores separately.
 - **Verb library:** Search by French verb or English meaning.
 - **Light and dark modes:** Responsive design with a saved theme preference.
 
@@ -37,7 +38,7 @@ Open the local URL printed in your terminal.
 
 Your first visit starts the lesson schedule. A new set is selected at local midnight, and the five-day collection repeats for review.
 
-Progress and theme preferences are stored in your browser. No account, API key, or backend is required. Progress does not sync between devices, and clearing browser data resets it. The latest quiz result for each day is retained, including retry results.
+Progress and theme preferences are stored in your browser. No account, API key, or backend is required. Progress does not sync between devices, and clearing browser data resets it. The latest vocabulary quiz and listening result for each day are retained separately, including retry results.
 
 Pronunciation uses your device’s speech synthesis, so French voice availability and quality depend on your browser and installed voices.
 
